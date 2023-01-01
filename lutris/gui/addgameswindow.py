@@ -277,11 +277,15 @@ class AddGamesWindow(BaseApplicationWindow):  # pylint: disable=too-many-public-
     def install_from_script(self):
         """Install from a YAML file"""
         script_dlg = FileDialog(_("Select a Lutris installer"))
-        if script_dlg.filename:
-            installers = get_installers(installer_file=script_dlg.filename)
-            application = Gio.Application.get_default()
-            application.show_installer_window(installers)
-        self.destroy()
+        try:            
+            if script_dlg.filename:
+                installers = get_installers(installer_file=script_dlg.filename)
+                application = Gio.Application.get_default()
+                application.show_installer_window(installers)
+                self.destroy()
+        except Exception as error:
+            message = type(error).__name__+ ": " + str(error)
+            ErrorDialog("Could not load install script.", secondary=message, parent=self)            
 
     def add_local_game(self):
         """Manually configure game"""
